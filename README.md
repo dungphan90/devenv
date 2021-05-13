@@ -14,7 +14,7 @@ Adam L. Lyon (April 2020)
 - [8. Running the containers with `docker-compose`](#8-running-the-containers-with-docker-compose)
   - [8.1. Setting up `docker-compose`](#81-setting-up-docker-compose)
   - [8.2. Notes about `docker-compose`](#82-notes-about-docker-compose)
-  - [8.3. Features of  `docker-compose.yml` file](#83-features-of-docker-composeyml-file)
+  - [8.3. Features of  `docker-compose.yml` file](#83-features-of--docker-composeyml-file)
 - [9. Running](#9-running)
   - [9.1. Run the long lived container as a service](#91-run-the-long-lived-container-as-a-service)
   - [9.2. Some notes](#92-some-notes)
@@ -25,6 +25,14 @@ Adam L. Lyon (April 2020)
   - [10.4 Running sshfs](#104-running-sshfs)
 
 # 0. Changes
+
+2021-05-13: Docker for Mac has some new features that I suggest turning off as they either do not work or they lead to poor performance.
+
+- On the General Preferences page, there is an option "Use gRPC FUSE for file sharing". I was hoping this would eliminate the need for mounting CVMFS within the container and using the NFS share, but alas, i/o performance is still very slow. In fact with this option turned on, docker caused excessive CPU activity. I turned it off.
+
+- There is a new feature under "Experimental" for "Use new virtualization framework". When I had this turned on, I could not run docker compose with an NFS share (there is an open ticket with Docker about internal network failures). When I ran docker mounting `/cvmfs` from my host laptop, simple commands in the container would hang. I suggest leaving this experimental feature turned off.
+
+The method described in this document still seems to be the most performant way to do art based development with `Docker for Mac`.
 
 2020-09-07: This repository has been streamlined by removing the VNC and ephemeral images (the cvmfs server and client) in favor of the simpler images that make long lived containers. References to CLion have been removed as I am no longer using it in favor of Microsoft Visual Studio Code (CLion licensing became unfriendly towards the lab). I have added clang tools to the SL7 image for clang-format and clang-tidy. I have also changed the meaning of `CVMFS_EXP`. It can now hold a colon-separated list of CVMFS volumes to mount (e.g. `larsoft.opensciencegrid.org:larsoft.osgstorage.org`). The full name of the CVMFS volume must now be given, as in the example. I also added packages that Mu2e discovered were needed for art v3_6_2
 
@@ -39,7 +47,7 @@ Linux style development, like what we do for particle physics experiments at Fer
 
 The differences that Mac and XCode introduce are difficult to manage and many experiments have stopped making Mac builds. Despite these problems, Mac laptops remain powerful machines and the MacOS environment is advantageous in many other areas. Therefore, mitigating the problems with Linux style development is motivated.
 
-This package contains a configuration for `docker` containers along with instructions for integrating with the Mac that make for an effective and efficient development platform for Linux style development of physics code. Instructions for using [Microsost Visual Studio Code](https://code.visualstudio.com) (VSCode) for C++ development in this environment are given in the documentation.  
+This package contains a configuration for `docker` containers along with instructions for integrating with the Mac that make for an effective and efficient development platform for Linux style development of physics code. Instructions for using [Microsost Visual Studio Code](https://code.visualstudio.com) (VSCode) for C++ development in this environment are given in the documentation.
 
 Note that the containers and techniques here may also work on Windows. You will have to adapt these instructions for that platform.
 
@@ -153,7 +161,7 @@ There are five docker images you may pull or build (note that all of the images 
   - Directories specified in the environment variable `CVMFS_EXP` as a colon separated list. For example,
     - `CVMFS_EXP=gm2.opensciencegrid.org` will mount `/cvmfs/gm2.opensciencegrid.org`.
     - `CVMFS_EXP=uboone.opensciencegrid.org:uboone.osgstorage.org` will mount `/cvmfs/uboone.opensciencegrid.org` and `/cvmfs/uboone.osgstorage.org`.
-  
+
 # 7. Which image to use
 
 The following use cases are instructive for deciding which image to use.
@@ -214,7 +222,7 @@ You can alter the `docker-compose.yml` file to add additional services, such as 
 
 Below are instructions for running the services in the `docker-compose.yml` file.
 
-NOTE: The first time you try to run, you may encounter errors complaining that volumes do not exist. These errors are true - follow the instructions provided in the error message for creating the volumes. This may happen more than once - do it for each missing volume to create them all. Once you do this, you do not need to do it again.  
+NOTE: The first time you try to run, you may encounter errors complaining that volumes do not exist. These errors are true - follow the instructions provided in the error message for creating the volumes. This may happen more than once - do it for each missing volume to create them all. Once you do this, you do not need to do it again.
 
 ## 9.1. Run the long lived container as a service
 
