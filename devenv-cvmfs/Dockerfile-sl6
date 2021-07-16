@@ -17,6 +17,11 @@ RUN /bin/echo CVMFS_HTTP_PROXY=DIRECT >> /etc/cvmfs/default.local
 
 RUN cvmfs_config setup
 
+RUN sudo yum install -y vim git svn
+RUN mkdir -p /home/dphan/novasoft
+WORKDIR /home/dphan/novasoft
+
+ENV CVMFS_EXP=nova.opensciencegrid.org
 # Following https://success.docker.com/article/use-a-script-to-initialize-stateful-container-data
 COPY start_cvmfs.sh /usr/local/bin/start_cvmfs.sh
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh

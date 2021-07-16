@@ -3,6 +3,7 @@
 # Based on https://success.docker.com/article/use-a-script-to-initialize-stateful-container-data
 # Enviornment variable CVMFS_EXP must be set
 
+
 set -e   # Exit immediately if something returns non-zero status
 
 if [[ -z "${CVMFS_EXP}" ]]; then

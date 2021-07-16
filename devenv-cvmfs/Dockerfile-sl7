@@ -4,6 +4,8 @@
 FROM lyonfnal/devenv:sl7
 MAINTAINER Adam Lyon <lyon@fnal.gov>
 
+ENV USER=dphan
+
 # Set the time correctly
 RUN echo 'ZONE="America/Chicago"' > /etc/sysconfig/clock
 RUN rm -rf /etc/localtime
@@ -17,6 +19,11 @@ RUN /bin/echo CVMFS_HTTP_PROXY=DIRECT >> /etc/cvmfs/default.local
 
 RUN cvmfs_config setup
 
+RUN sudo yum install -y vim git svn
+RUN mkdir -p /home/$USER/novasoft
+WORKDIR /home/$USER/novasoft
+
+ENV CVMFS_EXP=nova.opensciencegrid.org
 # Following https://success.docker.com/article/use-a-script-to-initialize-stateful-container-data
 COPY start_cvmfs.sh /usr/local/bin/start_cvmfs.sh
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
